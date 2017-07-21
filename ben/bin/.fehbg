@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# This will pick a wallpaper file "at random" from my wallpaper download directory,
+# and call the feh utility to set that file as the current wallpaper.
+# This script is called from the openbox autostart script in ~/.config/openbox.
+# The openbox autostart script runs at bootup.
+# The script makes use of bash goodies not supported by dash.
+
+# Load a list of wallpaper filenames into an array.
+files=(/001/data/systemImages/wallpaper/*)
+
+# Pick one of the filenames using the bash $RANDOM function to provide the array index.
+# Bash weirdness notes: (1) $array[@] returns the elements of an array as a list of discrete string variables
+#                       (2) ${#array[#]} returns the number of elements in an array
+#                       (3) RANDOM%${#array[#]} returns a number between 1 and the number of elements in the array
+wallpaperfile=( "${files[RANDOM%${#files[@]}]}" )
+feh --bg-scale "${wallpaperfile}" 2>/dev/null
+
+
+## To display a different wallpaper every x number of seconds...
+##
+## Every x seconds, run feh to change wallpaper, looping through 
+## random ordered list of wallpaper files.
+## Get the number of files in the array.
+## Note this "number of files" will include subdirectories, so for this
+## use case, it would be best if the  wallpaper directory doesn't have 
+## any subdirectories.
+#numfiles=${#files[@]}
+## Sort the array of file names into a random order.
+#randfile=()
+#for((i=0;i<${numfiles};++i)); do
+#    randfile+=( "${files[RANDOM%${#files[@]}]}" )
+#done
+#i=0
+#while true; do
+    #wallpaperfile=${randfile[${i}]}
+    #feh --bg-scale "${wallpaperfile}" 2>/dev/null && sleep 900 || continue
+    #i=$(( $i + 1 ))
+    #if [ $i -gt ${numfiles} ]; then
+		#i=0
+	#fi
+#done

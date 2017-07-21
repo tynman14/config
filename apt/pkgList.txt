@@ -1,0 +1,120 @@
+# 2 locations - 
+#/001/data/config/debian_openbox/apt/pkgList.txt
+#/001/docs/Linux/Debian/pkgList.txt
+abcde	3
+adduser	1
+alsa-base	1
+alsa-utils	1
+amd64-microcode	1
+apt-listbugs	1
+apt-listchanges	1
+audacity	3
+avahi-utils 1 - added for HPLIP
+borgbackup	5
+build-essential	1
+cantata	3
+cdrdao	3
+chromium	2
+compton	2
+conky-all	2
+cryptkeeper	4
+curl	1
+dbus-x11	1
+dictionaries-common	3
+easytag	3
+efibootmgr	1
+evince	2
+feh	2
+file-roller	2
+flac	3
+fuse	1
+galculator	2
+galternatives	2
+gcc	5
+gdisk	1
+geany	2
+geany-plugins	2
+geeqie	2
+ghostscript-x 1  - added for HPLIP
+gimp	4
+git	1
+gksu	2
+gnome-icon-theme	2
+gnome-icon-theme-symbolic	2
+gnome-keyring	1
+gnome-menus	2
+gparted	2
+gvfs	1
+hddtemp	2
+htop	1
+hyphen-en-us	5 - this will install Libre Office
+i3lock	2
+inxi	1
+iptables-persistent	1
+jgmenu	5
+lame	3
+libcups2-dev 1  - added for HPLIP
+libcupsimage2-dev 1  - added for HPLIP
+libdbus-1-dev  1 - added for HPLIP
+libreoffice-still	8 (gets pulled in by hyphen-en-us)
+libsnmp-dev 1  - added for HPLIP
+libssl-dev 1  - added for HPLIP
+libtool 1  - added for HPLIP
+libtool-bin 1  - added for HPLIP
+libusb-1.0.0-dev 1  - added for HPLIP
+lightzone	5
+lm-sensors	2
+lshw 1
+lxappearance	2
+lzop	1
+i2c-tools	1
+mesa-utils	2
+mpc	3
+mysql-server	4
+mysql-client	4
+mysql-workbench			4
+ncmpcpp	3
+nfs-common	1
+ntp	1
+numlockx	1
+openbox	2
+obconf	2
+openconnect	4
+p7zip	1
+palemoon	2
+parted	1
+perl	4
+policykit-1-gnome	1
+python-dev 1  - added for HPLIP
+python-gobject 1  - added for HPLIP
+python-notify 1  - added for HPLIP
+python-qt4 1  - added for HPLIP
+python-qt4-dbus 1  - added for HPLIP
+redshift		3
+rsnapshot	1
+rsync	1
+sane	1
+simplenote	3
+snmp 1  - added for HPLIP
+soundconverter	3
+spacefm	2
+spotify	3
+sshfs	1
+teamviewer	4
+tint2	2
+udevil	2
+virtualbox	4
+vlc	2
+volumeicon-alsa	2
+wine	3
+winetricks	3
+xautolock	2
+xdotool	2
+xfce4-notifyd	2
+xfce4-power-manager	2
+xfce4-settings	2
+xfce4-taskmanager	2
+xfce4-terminal	2
+xorg	2
+xsane	2
+zenity	2

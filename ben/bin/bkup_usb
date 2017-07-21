@@ -1,0 +1,101 @@
+#!/bin/sh 
+#
+# rsnapshot config file: /home/ben/.config/rsnapshot/bkup_usb
+#
+# To clean usb drive, mount it, cd to the mount and run 
+#> rm -fr dd_backup
+#> rm -fr rsnapshot_backup
+#
+# These take a couple of minutes to run
+#
+# Added 15-Jan-2017: Check free space on USB drive
+
+
+# Functions
+is_set() { declare -p $1 >/dev/null 2>&1;}
+is_empty(){ is_set $1 && ! [[ ${!1} ]];}
+
+
+run_time=`date +"%Y%m%d-%H%M%S"`
+echo ${run_time}
+log_file=/home/ben/logs/backup_usb-${run_time}.log
+echo "Starting daily backup script ${run_time}"                       | tee ${log_file}
+
+# ==========================================================================
+# Get list of installed packages on local computer. Strictly not part of
+# backup, but a nice backup-y thing to do from time to time.
+# ==========================================================================
+run_time=`date +"%Y%m%d-%H%M%S"`
+dpkg --get-selections                                                 | tee  /001/docs/kessel/dpkg_get_selections_${run_time}
+
+# ==========================================================================
+# Create mount directory for usb drive if it doesn't already exist
+# ==========================================================================
+printf '\n\n%s\n\n\n' "Mounting USB drive for backup target..."
+if [ ! -d "/mnt/usb_seagate_bup_slim" ]; then
+  sudo mkdir -p /mnt/usb_seagate_bup_slim                     2>&1    | tee -a  ${log_file}
+fi
+
+# ==========================================================================
+# Mount the USB backup drive.
+# ==========================================================================
+sudo mount -L sea-bup-slim   /mnt/usb_seagate_bup_slim        2>&1
+
+if [ $? -eq 0 ]
+then
+  echo "Successfully mounted USB drive"                               | tee -a  ${log_file}
+else
+  echo "Mount of USB drive failed"                                    | tee -a  ${log_file}
+  echo "Aborting daily backup"                                        | tee -a  ${log_file}
+  exit 4
+fi
+
+# ==========================================================================
+# Check if USB drive has sufficient free space to hold a backup.
+# Note df reports number of 1k blocks.
+# ==========================================================================
+avail=$(df --output=avail  /mnt/usb_seagate_bup_slim | grep -v Avail)
+is_empty ${avail} && avail=0
+printf '%s = %i\n' "USB Drive, number of 1KB blocks free " ${avail}   | tee -a  ${log_file}
+
+# Check for 100 GB free space (100,000,000 1k blocks) - each delta backup consumes around 25 GB
+if [ ${avail} -gt 100000000 ]
+then
+  echo "USB drive avail space > 100 GB, backup will continue."        | tee -a  ${log_file}
+else
+  echo "USB drive avail space !> 10GB, Fail "                         | tee -a  ${log_file}
+  echo "Aborting daily backup"                                        | tee -a  ${log_file}
+  sudo umount /mnt/usb_seagate_bup_slim                       2>&1    | tee -a  ${log_file}
+  exit 4
+fi
+
+# ==========================================================================
+# Create backup directory on usb drive if it doesn't already exist
+# ==========================================================================
+if [ ! -d "/mnt/usb_seagate_bup_slim/rsnapshot_backup" ]; then
+  sudo mkdir -p /mnt/usb_seagate_bup_slim/rsnapshot_backup    2>&1    | tee -a  ${log_file}
+fi
+
+
+# ==========================================================================
+# The rsnapshot utility is used to perform the actual backup.
+# ==========================================================================
+sudo rsnapshot -v -c /home/ben/.config/rsnapshot/bkup_usb daily  2>&1 | tee -a  ${log_file}
+finish_time=`date +"%Y%m%d-%H%M%S"`
+echo "Finished rsnashot at  ${finish_time}"                           | tee -a  ${log_file}
+
+
+# ==========================================================================
+# Cleanup
+# ==========================================================================
+sudo umount /mnt/usb_seagate_bup_slim                         2>&1    | tee -a  ${log_file}
+
+if [ $? -eq 0 ]
+then
+  echo "Successfully unmounted USB drive"                             | tee -a  ${log_file}
+else
+  echo "ERROR: Unmount of USB drive failed"                           | tee -a  ${log_file}  
+fi
+
+finish_time=`date +"%Y%m%d-%H%M%S"`
+echo "Finished daily backup script ${finish_time}"                    | tee -a  ${log_file}

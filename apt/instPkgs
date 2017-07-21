@@ -1,0 +1,67 @@
+#!/bin/bash
+# run-time parms:
+# #1 -  Package level to be installed
+
+# Set default target database
+targetLevel=0
+
+# ================================================
+# Must run under root user
+# ================================================
+
+if [[ $EUID -ne 0 ]]; then
+  echo "FAIL: You must be a root user" 2>&1
+  exit 12
+else
+  echo "Proceeding"
+fi
+
+# ================================================
+# Ensure Parm #1 is set
+# ================================================
+if [ $# -gt 0 ];then
+  if [ ! -z $1 ]; then
+    targetLevel=$1
+  else
+    echo "Must supply Parm#1: Pkg Level"
+    exit 8
+  fi
+else
+  echo "Must supply Parm#1: Pkg Level"
+  exit 8
+fi
+
+echo "Parm#1 = $targetLevel"
+
+exec 3< ../data/pkgList.txt
+
+while read pkgName pkgLevel  <&3; do
+	if [ $pkgLevel -eq  $targetLevel ]; then
+		printf "\n\n%s\n" "*********************************************"
+		printf "%s\n" "Pkg $pkgName"
+		printf "%s\n" "*********************************************"
+		printf "%s" "OK to install pkg $pkgName (level $pkgLevel) ? "
+		read -p "Y-Install; S-Skip this package; X-Exit script: " myAns
+		
+		case $myAns in
+			([yY]* )
+				echo "Installing $pkgName"
+				apt install  ${pkgName}
+				;;
+			([sS]* )
+				echo "Skipping $pkgName"
+				;;
+			([xX]* )
+				echo "Terminating script"
+				exit 1
+				;;
+			(*)
+				echo "Answer doesn't match Y, S or X, skipping $pkgName"
+				;;
+		esac
+	else
+		printf "\n%s\n" "Pkg $pkgName is from level $pkgLevel. Processing level $targetLevel, therefore skipping."
+	fi
+done 
+
+exec 3<&-

@@ -1,0 +1,2 @@
+#!/bin/sh
+cat /home/ben/.config/jgmenu/sortie.csv | jgmenu --config-file=/home/ben/.config/jgmenu/jgmenu_sortierc

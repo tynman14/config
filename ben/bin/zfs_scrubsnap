@@ -1,0 +1,42 @@
+#!/bin/sh 
+
+run_time=`date +"%Y%m%d-%H%M%S"`
+#echo ${run_time}
+
+log_file=/home/ben/logs/zfs_scrub_snap-${run_time}.log
+
+printf "Starting zfs scrub at ${run_time}...\n\n" | tee ${log_file}
+
+sudo zpool scrub zp01
+
+sleep 60
+
+RUNNING=1
+
+while [ "$RUNNING" = "1" ]; do
+  sudo zpool status -v  zp01 > /tmp/zfs_status.txt
+  cat /tmp/zfs_status.txt
+  if  grep -q "scrub in progress" /tmp/zfs_status.txt; then
+    printf "Zfs scrub be running\n\n"
+    sleep 60
+  else
+	run_time=`date +"%Y%m%d-%H%M%S"`
+    printf "Zfs scrub be finished at ${run_time}. \n"
+    RUNNING=0
+  fi
+done
+
+if sudo zpool status -v  zp01 | grep -q "No known data errors"; then
+# run backup
+  printf "Starting zfs snapshot\n" | tee -a ${log_file}
+  sudo zfs snapshot -r zp01/001@${run_time}
+  sudo zfs snapshot -r zp01/002@${run_time}
+  sudo zfs snapshot -r zp01/home@${run_time}
+  
+  run_time=`date +"%Y%m%d-%H%M%S"`
+  printf "Finsihed zfs snapshot at ${run_time}.\n\n" | tee -a ${log_file}
+  sudo zfs list -t snapshot | tee -a ${log_file}
+else
+	run_time=`date +"%Y%m%d-%H%M%S"`
+	printf "Scrub reported errors on zpool ZP01, snapshot aborted at ${run_time}..\n\n" | tee -a ${log_file}
+fi

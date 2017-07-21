@@ -1,0 +1,15 @@
+[Unit]
+Description=i3lock on suspend resume
+After=suspend.target
+
+[Service]
+User=ben
+Type=forking
+Environment=DISPLAY=:0
+ExecStart=/usr/bin/i3lock -i /001/downloads/wallpaper/ring-on-the-map.png -t
+#ExecStart=/usr/bin/i3lock -i /001/downloads/wallpaper/security-steel-door-lock-hd-312108.png -t
+
+
+[Install]
+WantedBy=suspend.target
+

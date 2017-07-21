@@ -1,0 +1,40 @@
+#!/bin/bash 
+#
+# Update music flac directory on tynmanpi01 music server
+
+# Functions
+is_set() { declare -p $1 >/dev/null 2>&1;}
+is_empty(){ is_set $1 && ! [[ ${!1} ]];}
+
+
+run_time=`date +"%Y%m%d-%H%M%S"`
+echo ${run_time}
+log_file=/home/ben/logs/updt_music-${run_time}.log
+echo "Starting updt_rpi_music script ${run_time}"                       | tee ${log_file}
+
+# ==========================================================================
+# Create local mount directory for rsapi usb flash drive if it doesn't 
+# already exist.
+# ==========================================================================
+printf '\n\n%s\n\n\n' "Mounting raspi music drive for target..."
+if [ ! -d "/mnt/raspi_music" ]; then
+  sudo mkdir -p /mnt/raspi_music                     2>&1    | tee -a  ${log_file}
+fi
+
+# ==========================================================================
+# Mount the raspi USB flash music drive.
+# ==========================================================================
+sudo mount tynmanpi01:/mnt/music /mnt/raspi_music        2>&1
+
+if [ $? -eq 0 ]
+then
+  echo "Successfully mounted target music drive on tynmanpi01"        | tee -a  ${log_file}
+else
+  echo "Mount of tynmanpi01 drive failed"                             | tee -a  ${log_file}
+  echo "Aborting music copy operation"                                | tee -a  ${log_file}
+  exit 4
+fi
+
+sudo rsync  --delete -avh /001/music/flac     /mnt/raspi_music
+
+sudo umount /mnt/raspi_music

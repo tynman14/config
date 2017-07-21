@@ -1,0 +1,5 @@
+#!/bin/bash 
+#
+# calls mpd-notify, which issues a notification when mpd changes tracks
+
+mpd-notify -c 192.168.1.104 &

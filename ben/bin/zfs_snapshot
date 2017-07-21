@@ -1,0 +1,15 @@
+#!/bin/sh 
+
+run_time=`date +"%Y%m%d-%H%M%S"`
+log_file=/home/ben/logs/zfs_snap-${run_time}.log
+
+printf "Starting zfs snapshot. Runtime = ${run_time}.\n"                   > ${log_file}
+
+sudo zfs snapshot -r zp01/001@${run_time}                            2>&1  >> ${log_file}
+sudo zfs snapshot -r zp01/002@${run_time}                            2>&1  >> ${log_file}
+sudo zfs snapshot -r zp01/home@${run_time}                           2>&1  >> ${log_file}
+
+sudo zfs list -t snapshot                                            2>&1  >> ${log_file}
+  
+run_time=`date +"%Y%m%d-%H%M%S"`
+printf "Finsihed zfs snapshot at ${run_time}.\n\n"                         >> ${log_file}

@@ -1,0 +1,21 @@
+### From aplay -l:
+### card 0: Generic [HD-Audio Generic], device 3: HDMI 0 [HDMI 0]
+### card 1: Generic_1 [HD-Audio Generic], device 0: ALC887-VD Analog [ALC887-VD Analog]
+### card 1: Generic_1 [HD-Audio Generic], device 1: ALC887-VD Digital [ALC887-VD Digital]
+
+defaults.pcm.!card Generic_1
+defaults.pcm.!device 0
+defaults.ctl.!card Generic_1
+#defaults.ctl.!device 0
+
+pcm.digital_spdif {
+    type hw
+    card Generic_1
+    device 1
+    }
+
+ctl.digital_spdif {
+    type hw
+    card Generic_1
+    device 1
+    }
